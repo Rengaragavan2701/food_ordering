@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Ordering App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        header {
+            background-color: #ff5733;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .menu {
+            width: 60%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .menu-item button {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .menu-item button:hover {
+            background-color: #218838;
+        }
+        .cart {
+            width: 35%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-items {
+            margin-bottom: 20px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .cart-item button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .cart-item button:hover {
+            background-color: #c82333;
+        }
+        .order-summary {
+            text-align: center;
+        }
+
+        .order-summary button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .order-summary button:hover {
+            background-color: #0056b3;
+        }
+        footer {
+            background-color: #ff5733;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .menu, .cart {
+                width: 90%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    🍕 Welcome to pizza corner 🍕
+</header>
+
+<div class="container">
+    <!-- Food Menu -->
+    <div class="menu">
+        <h2>Today's Menu</h2>
+        <div class="menu-item">
+            <span>🍔 Burger - $7</span>
+            <button onclick="addToCart('Burger', 5)">Add</button>
+        </div>
+        <div class="menu-item">
+            <span>🍕 Pizza - $8</span>
+            <button onclick="addToCart('Pizza', 8)">Add</button>
+        </div>
+        <div class="menu-item">
+            <span>🌭 Hot Dog - $4</span>
+            <button onclick="addToCart('Hot Dog', 4)">Add</button>
+        </div>
+        <div class="menu-item">
+            <span>🥗 Salad - $6</span>
+            <button onclick="addToCart('Salad', 6)">Add</button>
+        </div>
+        <div class="menu-item">
+            <span>🍗 Fried chicken - $9</span>
+            <button onclick="addToCart('Fried chicken', 9)">Add</button>
+        </div>
+        <div class="menu-item">
+            <span>🍟 Fries - $3</span>
+            <button onclick="addToCart('Fries', 3)">Add</button>
+        </div>
+    </div>
+
+    <!-- Shopping Cart -->
+    <div class="cart">
+        <h2>Your Cart</h2>
+        <div class="cart-items"></div>
+        <div class="order-summary">
+            <h3>Total: $<span id="total-price">0</span></h3>
+            <button onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Ragav Food Ordering App - All Rights Reserved
+</footer>
+
+<script>
+    let cart = [];
+
+    function addToCart(name, price) {
+        let existingItem = cart.find(item => item.name === name);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name, price, quantity: 1 });
+        }
+
+        updateCart();
+    }
+
+    function removeFromCart(name) {
+        cart = cart.filter(item => item.name !== name);
+        updateCart();
+    }
+
+    function updateCart() {
+        let cartItemsContainer = document.querySelector('.cart-items');
+        cartItemsContainer.innerHTML = '';
+
+        let totalPrice = 0;
+
+        cart.forEach(item => {
+            totalPrice += item.price * item.quantity;
+
+            let cartItem = document.createElement('div');
+            cartItem.classList.add('cart-item');
+            cartItem.innerHTML = `
+                <span>${item.name} (x${item.quantity}) - $${item.price * item.quantity}</span>
+                <button onclick="removeFromCart('${item.name}')">Remove</button>
+            `;
+            cartItemsContainer.appendChild(cartItem);
+        });
+
+        document.getElementById('total-price').textContent = totalPrice;
+    }
+
+    function placeOrder() {
+        if (cart.length === 0) {
+            alert('Your cart is empty. Add some items first.');
+            return;
+        }
+
+        let orderSummary = cart.map(item => ${item.quantity}x ${item.name}).join(', ');
+        alert(Thank you for your order! You've ordered: ${orderSummary}. Total: $${document.getElementById('total-price').textContent});
+        
+        cart = [];
+        updateCart();
+    }
+</script>
+
+</body>
+</html>
